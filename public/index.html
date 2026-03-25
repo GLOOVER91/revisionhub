@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RevisionHub</title>
+<style>
+body{font-family:Poppins;background:#f4f8fc}
+header{background:#1E90FF;color:white;padding:15px;text-align:center}
+.card{background:white;margin:10px;padding:15px;border-radius:10px}
+button{background:#1E90FF;color:white;padding:10px;border:none}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>RevisionHub</h1>
+</header>
+
+<div class="card">
+<h3>Register</h3>
+<input id="ruser" placeholder="username">
+<input id="rpass" type="password" placeholder="password">
+<button onclick="register()">Register</button>
+</div>
+
+<div class="card">
+<h3>Login</h3>
+<input id="user">
+<input id="pass" type="password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="card">
+<h3>Quiz</h3>
+<button onclick="loadQuiz()">Start</button>
+<p id="quiz"></p>
+<input id="ans">
+<button onclick="submitAns()">Submit</button>
+<p id="result"></p>
+</div>
+
+<div class="card">
+<h3>AI Helper</h3>
+<input id="q">
+<button onclick="askAI()">Ask</button>
+<p id="ai"></p>
+</div>
+
+<script>
+async function register(){
+await fetch('/register',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username:ruser.value,password:rpass.value})});
+alert('Registered');
+}
+
+async function login(){
+let r=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username:user.value,password:pass.value})});
+let d=await r.json();
+alert(d.role||d.error);
+}
+
+async function loadQuiz(){
+let r=await fetch('/quiz');
+let d=await r.json();
+quiz.innerText=d[0].question;
+}
+
+async function submitAns(){
+let r=await fetch('/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({answer:ans.value})});
+let d=await r.json();
+result.innerText="Score: "+d.score;
+}
+
+async function askAI(){
+let r=await fetch('/ai',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({question:q.value})});
+let d=await r.json();
+ai.innerText=d.answer;
+}
+</script>
+
+</body>
+</html>
